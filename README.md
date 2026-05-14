@@ -1,8 +1,10 @@
 # aeo-sdk-go
 
-Go SDK for the [AEO Protocol v0.1](https://github.com/mizcausevic-dev/aeo-protocol-spec) — parse, build, validate, and fetch AEO declaration documents. **Zero non-stdlib dependencies.**
-
 [![Go Reference](https://pkg.go.dev/badge/github.com/mizcausevic-dev/aeo-sdk-go.svg)](https://pkg.go.dev/github.com/mizcausevic-dev/aeo-sdk-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mizcausevic-dev/aeo-sdk-go)](https://goreportcard.com/report/github.com/mizcausevic-dev/aeo-sdk-go)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+Go SDK for the [AEO Protocol v0.1](https://github.com/mizcausevic-dev/aeo-protocol-spec) — parse, build, validate, and fetch AEO declaration documents. **Zero non-stdlib dependencies.**
 
 ## Install
 
