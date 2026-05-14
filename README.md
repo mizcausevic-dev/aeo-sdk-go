@@ -75,7 +75,7 @@ Full spec at [github.com/mizcausevic-dev/aeo-protocol-spec](https://github.com/m
 
 ## License
 
-AGPL-3.0.
+MIT-licensed. Free for commercial and non-commercial use with attribution. The AEO Protocol specification this SDK implements is also MIT (see [aeo-protocol-spec](https://github.com/mizcausevic-dev/aeo-protocol-spec)).
 
 ## Kinetic Gain Protocol Suite
 
