@@ -1,0 +1,48 @@
+name: Release
+
+# Fires on a semver tag. The Go module proxy at proxy.golang.org auto-indexes
+# any public Git repo with a semver tag — no token, no upload step. This
+# workflow simply warms the proxy, verifies it sees the new version, and
+# creates a GitHub Release pointing at the CHANGELOG.
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write   # needed to create the GitHub Release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - name: Warm the Go module proxy
+        run: |
+          MODULE=$(head -1 go.mod | awk '{print $2}')
+          TAG="${GITHUB_REF_NAME}"
+          echo "Asking proxy.golang.org to fetch $MODULE@$TAG ..."
+          # GOFLAGS=-mod=mod just to be explicit; the request itself triggers indexing.
+          GO111MODULE=on GOPROXY=https://proxy.golang.org go list -m -json "${MODULE}@${TAG}" || true
+          # Poll until the proxy reports the version.
+          for attempt in 1 2 3 4 5; do
+            if curl -sf "https://proxy.golang.org/${MODULE}/@v/${TAG}.info" > /dev/null; then
+              echo "Proxy sees ${MODULE}@${TAG}"
+              exit 0
+            fi
+            echo "Proxy not ready yet (attempt $attempt/5) — sleeping 10s ..."
+            sleep 10
+          done
+          echo "::warning::Proxy did not confirm within 5 attempts; the version may still appear shortly."
+
+      - name: Create GitHub Release
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --notes "See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_REF_NAME}/CHANGELOG.md). Install via \`go get github.com/${GITHUB_REPOSITORY#*/}@${GITHUB_REF_NAME}\`."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
